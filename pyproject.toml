@@ -12,7 +12,7 @@ dependencies = [
   "pydantic~=2.11.5",
   "python-multipart~=0.0.17",
   "uvicorn[standard]~=0.29.0",
-  "saltbox-sdk[event-bus,mongo]",
+  "saltbox-sdk[event-bus,mongo] @ git+https://dev.saltbox.pro/saltbox/saltbox-sdk@dev",
 ]
 
 [tool.uv.sources]
