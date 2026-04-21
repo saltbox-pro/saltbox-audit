@@ -67,7 +67,7 @@ Trigger API Client pipeline:
   stage: api-client
   variables:
     MODULE_NAME: app
-    SALTBOX_ENV_FILE: 'example.env'
+    SALTBOX_ENV_FILE: 'tests/test.env'
     GEN_OPENAPI_CMD: python3 './${MODULE_NAME}/utils/generate_openapi.py'
   trigger:
     include:
