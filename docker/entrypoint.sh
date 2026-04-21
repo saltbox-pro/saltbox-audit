@@ -10,7 +10,9 @@ err() {
 }
 
 MONGO_PASSWORD="$(cat "$MONGO_USER_PASSWORD_FILE")"
-export MONGO_PASSWORD
+RABBITMQ_AMQP_PASSWORD="$(cat "${RABBITMQ_AMQP_PASSWORD_FILE}")"
+
+export MONGO_PASSWORD RABBITMQ_AMQP_PASSWORD
 
 if [ "$DEV_MODE" = 1 ]; then
     pip3 install --editable .[reload]
