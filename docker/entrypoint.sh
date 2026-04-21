@@ -1,5 +1,5 @@
 #! /bin/sh
-set -eu
+set -e
 
 warn() {
   1>&2 echo "$@"
