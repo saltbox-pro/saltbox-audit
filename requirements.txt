@@ -3,5 +3,5 @@ httpx~=0.27.0
 pydantic-settings~=2.9.1
 pydantic~=2.11.3
 uvicorn[standard]~=0.29.0
-saltbox-sdk[mongo,event-bus] @ git+https://dev.saltbox.pro/saltbox/saltbox-sdk/@fede2dc87394a5c4bd8c6e916598baf015ad90e2
+saltbox-sdk[mongo,event-bus] @ git+https://dev.saltbox.pro/saltbox/saltbox-sdk/@07df005d79d0d75a753122a1c87da84a9d6c032f
 python-multipart~=0.0.17
