@@ -12,7 +12,7 @@ settings = Settings()
 fs_router = RabbitRouter(settings.rabbitmq.url, log_level=logging.DEBUG)
 
 
-@fs_router.subscriber('audit_events', no_ack=True)
+@fs_router.subscriber('audit_events')
 async def audit_msg_received(
     message: AuditEventCreateSchema,
     audit_service: Annotated[AuditService, Depends(get_audit_service)],
@@ -20,7 +20,6 @@ async def audit_msg_received(
     fs_logger: Logger,
 ) -> None:
     fs_logger.warning(f'Received audit message:{message.event_id}')
-    # Save the audit event to the database
     fs_logger.info(f'Message:\n{message}')
     try:
         await audit_service.create(message)
