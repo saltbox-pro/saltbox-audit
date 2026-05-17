@@ -24,14 +24,15 @@ include:
 
 .lint-job:
   stage: lint
+  variables:
+    PIP_CACHE_DIR: '$CI_PROJECT_DIR/.cache/pip'
   image: python:3.12-alpine
   before_script:
     - apk add git
-    - apk add uv
-    - uv sync --no-sources
+    - pip3 install -e .[dev]
   cache:
     paths:
-      - '.venv/'
+      - '.cache/pip/'
   rules:
     - if: $LINTING_ENABLED == 'true'
 
