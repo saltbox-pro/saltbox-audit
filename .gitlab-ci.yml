@@ -28,7 +28,7 @@ include:
   before_script:
     - apk add git
     - apk add uv
-    - uv sync
+    - uv sync --no-dev
   cache:
     paths:
       - '.venv/'
