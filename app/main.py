@@ -1,6 +1,5 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from functools import partial
 from typing import Any
 
 from fastapi import FastAPI
@@ -51,7 +50,13 @@ app_config: dict[str, Any] = {
 
 app_config = patch_swagger_config(app_config)
 
-app = FastAPI(**app_config)
+
+class _App(FastAPI):
+    def openapi(self) -> dict[str, Any]:
+        return custom_openapi(self, app_config, servers=[{'url': settings.app.base_url_root_path}])
+
+
+app = _App(**app_config)
 
 
 app.add_middleware(
@@ -77,5 +82,3 @@ async def health_check() -> HealthCheckResponse:
 
 app.include_router(router=router)
 app.include_router(router=fs_router)
-
-app.openapi = partial(custom_openapi, app, app_config, servers=[{'url': settings.app.base_url_root_path}])  # type: ignore[method-assign]

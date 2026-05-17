@@ -1,26 +1,14 @@
 [project]
-dynamic = ["version"]
 name = "saltbox-audit"
-requires-python = ">=3.12,<4"
-license = "Apache-2.0"
 description = ""
 readme = "README.md"
-dependencies = [
-  "fastapi[standard]~=0.115.4",
-  "httpx~=0.27.2",
-  "pydantic-settings~=2.9.1",
-  "pydantic~=2.11.5",
-  "python-multipart~=0.0.17",
-  "uvicorn[standard]~=0.29.0",
-  "saltbox-sdk[event-bus,mongo] @ git+https://dev.saltbox.pro/saltbox/saltbox-sdk@dev",
-]
-
-[tool.uv.sources]
-saltbox-sdk = { git = "https://dev.saltbox.pro/saltbox/saltbox-sdk", rev = "dev" }
+requires-python = ">=3.12,<4"
+license = "Apache-2.0"
+dynamic = ["dependencies", "version"]
 
 [project.urls]
-Homepage = "https://saltbox.pro"
 Documentation = "https://saltbox.pro"
+Homepage = "https://saltbox.pro"
 Repository = "https://dev.saltbox.pro/saltbox/saltbox-audit"
 
 [project.scripts]
@@ -31,21 +19,46 @@ dev = [
   "mypy>=1.15.0",
   "pre-commit",
   "ruff",
+  "saltbox-sdk[mongo,redis,event-bus]",
+  "ty>=0.0.35",
   "watchfiles",
 ]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatch-requirements-txt", "hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.metadata]
 allow-direct-references = true
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
 
 [tool.hatch.version]
 path = "app/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
+
+[tool.mypy]
+check_untyped_defs = true
+plugins = ["pydantic.mypy"]
+python_version = "3.12"
+ignore_missing_imports = false
+color_output = true
+warn_redundant_casts = true
+warn_unused_configs = true
+exclude = ["venv/", ".venv/", "tests/*"]
+strict = true
+disallow_any_generics = false
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+implicit_reexport = false
+warn_return_any = true
+warn_unreachable = true
+warn_unused_ignores = true
+mypy_path = "../saltbox-sdk/"
 
 [tool.ruff]
 target-version = "py312"
@@ -61,45 +74,45 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 select = [
-  "B",     # flake8-bugbear
-  "C90",   # mccabe
-  "C4",    # flake8-comprehensions
-  "DTZ",   # flake8-datetimez https://docs.astral.sh/ruff/rules/#flake8-datetimez-dtz
-  "EM",    # flake8-errmsg
-  "UP",    # pyupgrade
-  "FA",    # flake8-future-annotations
-  "LOG",   # flake8-logging
-  "PTH",   # flake8-use-pathlib
-  "ASYNC", #flake8-async
-  "G",     # flake8-logging-format
-  "E",     # pycodestyle errors
-  "F",     # pyflakes
-  "I",     # isort
-  "S",     # flake8-bandit
-  "W",     # pycodestyle warnings
-  "N",     # pep8-naming
-  "RUF",   # ruff checks
-  "TD",    # flake8-todo
+  "B",  # flake8-bugbear
+  "C90",  # mccabe
+  "C4",  # flake8-comprehensions
+  "DTZ",  # flake8-datetimez https://docs.astral.sh/ruff/rules/#flake8-datetimez-dtz
+  "EM",  # flake8-errmsg
+  "UP",  # pyupgrade
+  "FA",  # flake8-future-annotations
+  "LOG",  # flake8-logging
+  "PTH",  # flake8-use-pathlib
+  "ASYNC",  # flake8-async
+  "G",  # flake8-logging-format
+  "E",  # pycodestyle errors
+  "F",  # pyflakes
+  "I",  # isort
+  "S",  # flake8-bandit
+  "W",  # pycodestyle warnings
+  "N",  # pep8-naming
+  "RUF",  # ruff checks
+  "TD",  # flake8-todo
 ]
 ignore = [
   # "E402",   # module level import not at top of file
-  "E722", # do not use bare except
+  "E722",  # do not use bare except
   "ERA",  # do not autoremove commented out code
-  "N818", # error-suffix-on-exception-name
-  "UP040", # type instead of TypeAlias PEP 695"
-  "TD001", # Invalid TODO tag
-  "TD002", # Author name in TODO
-  "TD003", # Found TODO in code
-  "TD004", # Missing colon in TODO
-  "UP017", # Use datetime.UTC alias (not available for 3.10)
-  "RUF003", # Comment contains russian characters
-  "G004", # Logging statement uses string formatting
+  "N818",  # error-suffix-on-exception-name
+  "UP040",  # type instead of TypeAlias PEP 695"
+  "TD001",  # Invalid TODO tag
+  "TD002",  # Author name in TODO
+  "TD003",  # Found TODO in code
+  "TD004",  # Missing colon in TODO
+  "UP017",  # Use datetime.UTC alias (not available for 3.10)
+  "RUF003",  # Comment contains russian characters
+  "G004",  # Logging statement uses string formatting
 ]
 fixable = ["ALL"]
 unfixable = [
-  "F401", # Unused import
-  "F841", # Unused variable
-  "UP035", # Deprecated import
+  "F401",  # Unused import
+  "F841",  # Unused variable
+  "UP035",  # Deprecated import
 ]
 
 [tool.ruff.lint.flake8-bugbear]
@@ -120,29 +133,18 @@ convention = "google"
 
 [tool.ruff.lint.isort]
 known-first-party = [
-    "saltbox_sdk",
+  "saltbox_sdk",
 ]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.mypy]
-check_untyped_defs = true
-plugins = ["pydantic.mypy"]
-python_version = "3.12"
-ignore_missing_imports = false
-color_output = true
-warn_redundant_casts = true
-warn_unused_configs = true
-exclude = ["venv/", ".venv/", "tests/*"]
-strict = true
-disallow_any_generics = false
-disallow_incomplete_defs = true
-disallow_untyped_decorators = true
-disallow_untyped_defs = true
-implicit_reexport = false
-show_error_codes = true
-warn_return_any = true
-warn_unreachable = true
-warn_unused_ignores = true
-mypy_path = '../saltbox-sdk/'
+[tool.ty.environment]
+python-version = "3.12"
+extra-paths = ["../saltbox-bridge-messages/", "../saltbox-sdk/"]
+
+[tool.ty.terminal]
+error-on-warning = false
+
+[tool.uv.sources]
+saltbox-sdk = { path = "../saltbox-sdk", editable = true }
