@@ -38,11 +38,11 @@ include:
 
 ruff:
   extends: .lint-job
-  script: uv run ruff check app # --select I --fix
+  script: ruff check app # --select I --fix
 
 mypy:
   extends: .lint-job
-  script: uv run mypy app
+  script: mypy app
 
 Build audit image for tag:
   stage: build
