@@ -7,7 +7,7 @@
 .pytest_cache/
 .ruff_cache/
 /build/
-# /uv.lock
+/uv.lock
 __pycache__
 htmlcov/
 
