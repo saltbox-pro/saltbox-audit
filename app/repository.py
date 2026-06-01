@@ -8,7 +8,7 @@ from pymongo.operations import _IndexKeyHint
 # from app.config import logger
 from app.schemas import AuditEventModel
 from saltbox_sdk.db.mongo.config import get_mongo
-from saltbox_sdk.db.mongo.repository_base import TimeSeriesRepository
+from saltbox_sdk.db.mongo.repository_time_series_base import TimeSeriesRepository
 from saltbox_sdk.db.mongo.schemas_base import TimeSeriesConfig
 
 
