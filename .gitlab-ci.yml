@@ -10,11 +10,13 @@ stages:
   - build
   - api-client
 
+
 variables:
   # Set 0 to disable linting jobs
   LINTING_ENABLED: true
   TESTING_ENABLED: false
   GEN_API_CLIENT_ENABLED: false
+
 
 include:
   - project: 'saltbox/ci-lib'
@@ -22,27 +24,34 @@ include:
   - project: 'saltbox/ci-lib'
     file: 'def-branch-merge-guard.yml'
 
+
 .lint-job:
   stage: lint
   variables:
     PIP_CACHE_DIR: '$CI_PROJECT_DIR/.cache/pip'
+    APK_CACHE_DIR: '$CI_PROJECT_DIR/.cache/apk'
   image: python:3.12-alpine
   before_script:
-    - apk add git
+    - mkdir -p "$APK_CACHE_DIR"
+    - apk add --cache-dir "$APK_CACHE_DIR" git
     - pip3 install -e .[dev]
   cache:
     paths:
-      - '.cache/pip/'
+      - '$PIP_CACHE_DIR'
+      - '$APK_CACHE_DIR'
   rules:
     - if: $LINTING_ENABLED == 'true'
 
-ruff:
-  extends: .lint-job
-  script: ruff check app # --select I --fix
 
-mypy:
+Ruff:
+  extends: .lint-job
+  script: ruff check app  # --select I --fix
+
+
+Mypy:
   extends: .lint-job
   script: mypy app
+
 
 Build audit image for tag:
   stage: build

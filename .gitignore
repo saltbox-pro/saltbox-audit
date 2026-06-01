@@ -22,5 +22,6 @@ openapi.json
 /.idea
 
 # Other
+/.gitlab-ci-local
 /_*
 */.DS_Store
