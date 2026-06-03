@@ -6,6 +6,7 @@
 stages:
   - .guard
   - lint
+  - bump-version
   - test
   - build
   - api-client
@@ -23,6 +24,8 @@ include:
     file: 'build-image.yml'
   - project: 'saltbox/ci-lib'
     file: 'def-branch-merge-guard.yml'
+  - project: 'saltbox/ci-lib'
+    file: 'set-version.yml'
 
 
 .lint-job:
@@ -53,24 +56,18 @@ Mypy:
   script: mypy app
 
 
-Build audit image for tag:
+Bump Audit version:
+  stage: bump-version
+  extends: .set-backend-version
+  variables:
+    INNER_VERSION_FILE: 'app/__init__.py'
+
+
+Build Audit image:
   stage: build
   extends: .build-image
   variables:
     TARGET: main
-    IMAGE_TAG: '$CI_COMMIT_TAG'
-  rules:
-    - if: '$CI_COMMIT_TAG'
-
-
-Build audit image for branch:
-  stage: build
-  extends: .build-image
-  variables:
-    TARGET: main
-    IMAGE_TAG: '$CI_COMMIT_BRANCH'
-  rules:
-    - if: '$CI_COMMIT_BRANCH'
 
 
 Trigger API Client pipeline:
