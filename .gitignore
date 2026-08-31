@@ -23,4 +23,4 @@ openapi.json
 # Other
 /.gitlab-ci-local
 /_*
-*/.DS_Store
+*.DS_Store
