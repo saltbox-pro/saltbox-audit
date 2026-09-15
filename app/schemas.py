@@ -1,6 +1,10 @@
-from pydantic import ConfigDict
+from datetime import UTC, datetime, timedelta
+from enum import StrEnum
 
-from saltbox_sdk.db.mongo.schemas_base import IDMixin
+from pydantic import ConfigDict, Field, model_validator
+
+from app.exceptions import AuditAfterBeforeException, AuditDateRangeException
+from saltbox_sdk.db.mongo.schemas_base import IDMixin, QueryParams, SortParams, TimeseriesCursor
 from saltbox_sdk.db.schemas_base import CreatedModifiedMixin
 from saltbox_sdk.event_bus.schemas import (
     AuditCategory,
@@ -10,6 +14,15 @@ from saltbox_sdk.event_bus.schemas import (
     AuditStatus,
     AuditSubjectType,
 )
+from saltbox_sdk.utilities.helpers import Iso8601ZDatetime
+
+
+def datetime_from() -> datetime:
+    return datetime.now(UTC) - timedelta(days=1)
+
+
+def datetime_to() -> datetime:
+    return datetime.now(UTC)
 
 
 class AuditEventCreateSchema(AuditEventSchema):
@@ -45,3 +58,31 @@ class AuditEventModel(IDMixin, CreatedModifiedMixin, AuditEventCreateSchema):
             ]
         },
     )
+
+
+class AuditEventListBody(QueryParams, SortParams):
+    time_from: Iso8601ZDatetime = Field(default_factory=datetime_from)
+    time_to: Iso8601ZDatetime = Field(default_factory=datetime_to)
+    after: TimeseriesCursor | None = None
+    before: TimeseriesCursor | None = None
+    limit: int = 50
+    model_config = ConfigDict(extra='ignore')
+
+    @model_validator(mode='after')
+    def time_from_to_validator(self) -> 'AuditEventListBody':
+        if self.time_from and self.time_to and self.time_from > self.time_to:
+            raise AuditDateRangeException()
+        return self
+
+    @model_validator(mode='after')
+    def after_before_validator(self) -> 'AuditEventListBody':
+        after = self.after
+        before = self.before
+        if after and before:
+            raise AuditAfterBeforeException()
+        return self
+
+
+class AuditEventActionsSchema(StrEnum):
+    LIST = 'list'
+    GET_SCHEMA = 'get_schema'

@@ -11,10 +11,12 @@ err() {
 
 MONGO_PASSWORD="$(cat "$MONGO_USER_PASSWORD_FILE")"
 RABBITMQ_AMQP_PASSWORD="$(cat "${RABBITMQ_AMQP_PASSWORD_FILE}")"
+KEYCLOAK_CLIENT_SECRET="$(cat "$KEYCLOAK_CLIENT_SECRET_FILE")"
 
-export MONGO_PASSWORD RABBITMQ_AMQP_PASSWORD
+export MONGO_PASSWORD RABBITMQ_AMQP_PASSWORD KEYCLOAK_CLIENT_SECRET
 
 if [ "$DEV_MODE" = 1 ]; then
+    pip3 install --ignore-installed typing_extensions
     pip3 install --editable .[reload]
     pip3 install --editable "${SALTBOX_SDK_SRC_PATH}[mongo,event-bus]"
 fi

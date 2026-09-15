@@ -24,6 +24,26 @@ class AuditRepository(TimeSeriesRepository[AuditEventModel]):
                 ('status', ASCENDING),
                 ('subject_id', ASCENDING),
             ],
+            'created_action': [
+                ('created', ASCENDING),
+                ('action', ASCENDING),
+            ],
+            'created_subject_id': [
+                ('created', ASCENDING),
+                ('subject_id', ASCENDING),
+            ],
+            'created_resource_id': [
+                ('created', ASCENDING),
+                ('resource_id', ASCENDING),
+            ],
+            'created_correlation_id': [
+                ('created', ASCENDING),
+                ('correlation_id', ASCENDING),
+            ],
+            'created_subject_name': [
+                ('created', ASCENDING),
+                ('subject_name', ASCENDING),
+            ],
         }
         timeseries: ClassVar[TimeSeriesConfig] = {
             'timeField': 'created',
