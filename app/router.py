@@ -25,8 +25,6 @@ async def list_audit_events(
     audit_service: Annotated[AuditService, Depends(get_audit_service)],
 ) -> CursoredTimeseriesResponse[AuditEventModel]:
     result = await audit_service.get_list_in_range_paginated(
-        time_from=body.time_from,
-        time_to=body.time_to,
         query=body.query,
         after=body.after,
         before=body.before,
@@ -48,22 +46,16 @@ async def events_filter_schema() -> list[dict[str, Any]]:
     select_operators = [
         {'name': '=', 'value': '=', 'label': '='},
         {'name': '!=', 'value': '!=', 'label': '!='},
-        # {'name': 'in', 'value': 'in', 'label': 'in'},
-        # {'name': 'notIn', 'value': 'notIn', 'label': 'not in'},
     ]
     text_operators = [
         {'name': '=', 'value': '=', 'label': '='},
         {'name': '!=', 'value': '!=', 'label': '!='},
-        {'name': 'beginsWith', 'value': 'beginsWith', 'label': 'begins with'},
-        # {'name': 'endsWith', 'value': 'endsWith', 'label': 'ends with'},
-        # {'name': 'contains', 'value': 'contains', 'label': 'contains'},
-        # {'name': 'doesNotContain', 'value': 'doesNotContain', 'label': 'does not contain'},
-        # {'name': 'doesNotBeginWith', 'value': 'doesNotBeginWith', 'label': 'does not begin with'},
-        # {'name': 'doesNotEndWith', 'value': 'doesNotEndWith', 'label': 'does not end with'},
-        # {'name': 'in', 'value': 'in', 'label': 'in'},
-        # {'name': 'notIn', 'value': 'notIn', 'label': 'not in'},
-        # {'name': 'null', 'value': 'null', 'label': 'is null'},
-        # {'name': 'notNull', 'value': 'notNull', 'label': 'is not null'},
+    ]
+    datetime_operators = [
+        {'name': '<', 'value': '<', 'label': '<'},
+        {'name': '<=', 'value': '<=', 'label': '<='},
+        {'name': '>', 'value': '>', 'label': '>'},
+        {'name': '>=', 'value': '>=', 'label': '>='},
     ]
     allowed_filter_fields: list[dict[str, Any]] = [
         # Severity filter
@@ -71,7 +63,7 @@ async def events_filter_schema() -> list[dict[str, Any]]:
             'name': 'severity',
             'label': 'Severity',
             'valueEditorType': 'select',
-            'values': [severity.value for severity in AuditSeverity],
+            'values': [{'name': severity.value, 'label': severity.value} for severity in AuditSeverity],
             'defaultValue': AuditSeverity.INFO.value,
             'operators': select_operators,
         },
@@ -80,7 +72,7 @@ async def events_filter_schema() -> list[dict[str, Any]]:
             'name': 'category',
             'label': 'Category',
             'valueEditorType': 'select',
-            'values': [category.value for category in AuditCategory],
+            'values': [{'name': category.value, 'label': category.value} for category in AuditCategory],
             'defaultValue': AuditCategory.SYSTEM.value,
             'operators': select_operators,
         },
@@ -89,7 +81,7 @@ async def events_filter_schema() -> list[dict[str, Any]]:
             'name': 'status',
             'label': 'Status',
             'valueEditorType': 'select',
-            'values': [status.value for status in AuditStatus],
+            'values': [{'name': status.value, 'label': status.value} for status in AuditStatus],
             'defaultValue': AuditStatus.SUCCESS.value,
             'operators': select_operators,
         },
@@ -112,7 +104,7 @@ async def events_filter_schema() -> list[dict[str, Any]]:
             'name': 'subject_type',
             'label': 'Subject Type',
             'valueEditorType': 'select',
-            'values': [subject_type.value for subject_type in AuditSubjectType],
+            'values': [{'name': subject_type.value, 'label': subject_type.value} for subject_type in AuditSubjectType],
             'defaultValue': AuditSubjectType.USER.value,
             'operators': select_operators,
         },
@@ -121,7 +113,9 @@ async def events_filter_schema() -> list[dict[str, Any]]:
             'name': 'resource_type',
             'label': 'Resource Type',
             'valueEditorType': 'select',
-            'values': [resource_type.value for resource_type in AuditResourceType],
+            'values': [
+                {'name': resource_type.value, 'label': resource_type.value} for resource_type in AuditResourceType
+            ],
             'operators': select_operators,
         },
         # Source service filter
@@ -146,6 +140,18 @@ async def events_filter_schema() -> list[dict[str, Any]]:
             'label': 'SIEM Sent',
             'valueEditorType': 'checkbox',
             'defaultValue': False,
+            'operators': [
+                {'name': '=', 'value': '=', 'label': '='},
+            ],
+        },
+        # Created filter
+        {
+            'name': 'created',
+            'label': 'Created',
+            'valueEditorType': 'datetime-local',
+            'inputType': 'datetime-local',
+            'dataType': 'timestamp with time zone',
+            'operators': datetime_operators,
         },
     ]
 

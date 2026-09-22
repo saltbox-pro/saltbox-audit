@@ -10,13 +10,6 @@ class AuditException(SaltBoxBaseException):
     detail: str = 'An unexpected error occurred in the audit service.'
 
 
-class AuditDateRangeException(AuditException):
-    """Exception raised when the date range is invalid."""
-
-    status_code = status.HTTP_400_BAD_REQUEST
-    detail: str = 'Invalid date range: `time_from` cannot be later than `time_to`.'
-
-
 class AuditAfterBeforeException(AuditException):
     """Exception raised when both after and before cursors are used together."""
 
