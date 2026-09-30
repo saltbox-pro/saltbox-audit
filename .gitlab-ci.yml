@@ -29,12 +29,6 @@ include:
   - project: 'saltbox/ci-lib'
     file: 'set-version.yml'
 
-  - project: 'saltbox/ci-lib'
-    file: 'mirror-repo.yml'
-
-  - project: 'saltbox/ci-lib'
-    file: 'close-github-pr.yml'
-
 
 .lint-job:
   stage: lint
@@ -92,13 +86,3 @@ Trigger API Client pipeline:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'push'
     - if: $GEN_API_CLIENT_ENABLED == 'true'
-
-
-Mirror Repository:
-  extends: .mirror-repo
-  stage: build
-
-
-Check for GitHub PR to close:
-  extends: .close-github-pr
-  stage: build
